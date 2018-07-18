@@ -36,14 +36,14 @@ function generateKibanaLink(linkTemplate, replacementHash) {
   return linkTemplate
 }
 
-class ReleaseView extends React.Component {  
-  renderReleaseExtensionStatuses() { 
+class ReleaseView extends React.Component {
+  renderReleaseExtensionStatuses() {
     const { release, extensions } = this.props;
     // filter out 'once' types
     const filteredExtensions = extensions.filter(function(extension){
         if(extension.extension.type === "once") {
             return false
-        } 
+        }
         return true
     })
 
@@ -51,13 +51,13 @@ class ReleaseView extends React.Component {
       for(var i = 0; i < release.releaseExtensions.length; i++){
         if(release.releaseExtensions[i].extension.id === extension.id){
           // get state { waiting => yellow, failed => red, complete => green}
-          switch(release.releaseExtensions[i].state){  
+          switch(release.releaseExtensions[i].state){
             case "waiting":
               return (<Chip label={release.releaseExtensions[i].extension.extension.name} style={{ backgroundColor: "yellow", color: "black", marginRight: 4 }} />)
             case "complete":
               return (<Chip label={release.releaseExtensions[i].extension.extension.name} style={{ backgroundColor: "green", color: "white", marginRight: 4 }} />)
             case "failed":
-              return (<Chip label={release.releaseExtensions[i].extension.extension.name} style={{ backgroundColor: "red", color: "white", marginRight: 4 }} />)               
+              return (<Chip label={release.releaseExtensions[i].extension.extension.name} style={{ backgroundColor: "red", color: "white", marginRight: 4 }} />)
             default:
               return (<Chip label={release.releaseExtensions[i].extension.extension.name} style={{ backgroundColor: "yellow", color: "black", marginRight: 4 }} />)
           }
@@ -65,7 +65,7 @@ class ReleaseView extends React.Component {
       }
       return null
     })
-    
+
     return (
       <div style={{ display: "inline-block" }}>
         { projectExtensionLights }
@@ -75,9 +75,9 @@ class ReleaseView extends React.Component {
 
   render() {
     const { release, currentRelease } = this.props;
-    
+
     let state
-    switch(release.state) {  
+    switch(release.state) {
       case "waiting":
         state = (<CircularProgress className={styles.progress} />)
       break;
@@ -116,7 +116,7 @@ class ReleaseView extends React.Component {
                   {this.renderReleaseExtensionStatuses()}
                 </div>
               </Grid>
-              <Grid item xs={2} style={{textAlign: "right"}}> 
+              <Grid item xs={2} style={{textAlign: "right"}}>
                 {state}
                 {_.has(currentRelease, 'id') && currentRelease.id === release.id && <Chip label="LATEST" className={styles.activeRelease} />}
               </Grid>
@@ -206,7 +206,7 @@ class ReleaseView extends React.Component {
           environment {
             id
             key
-          }        
+          }
           releaseExtensions {
             id
             artifacts
@@ -287,14 +287,14 @@ export default class Releases extends React.Component {
     this.props.data.refetch()
 
     const { socket, match } = this.props;
-    
+
     socket.on(match.url.substring(1, match.url.length), (data) => {
       this.props.data.refetch()
-    });    
-    
+    });
+
     socket.on(match.url.substring(1, match.url.length) + '/reCompleted', (data) => {
       this.props.data.refetch()
-    });        
+    });
 
     const fields = [
       'id',
@@ -341,12 +341,12 @@ export default class Releases extends React.Component {
     const filteredExtensions = extensions.filter(function(extension){
         if(extension.extension.type === "once") {
             return false
-        } 
+        }
         return true
     })
 
     const releaseExtensions = filteredExtensions.map(function(extension){
-      let stateIcon = <CircularProgress size={25} /> 
+      let stateIcon = <CircularProgress size={25} />
 
       for(var i = 0; i < release.releaseExtensions.length; i++){
         if(release.releaseExtensions[i].extension.id === extension.id){
@@ -374,7 +374,7 @@ export default class Releases extends React.Component {
 
         return null
     })
-    
+
     return (
       <div>
         <Paper className={styles.root}>
@@ -408,7 +408,7 @@ export default class Releases extends React.Component {
           </Table>
         </Paper>
       </div>
-    )   
+    )
   }
 
   handleToggleDrawer(release, e){
@@ -423,9 +423,9 @@ export default class Releases extends React.Component {
     const { refetch } = this.props.data;
 
     createRelease({
-      variables: { 
-        headFeatureID: release.headFeature.id, 
-        projectID: release.project.id, 
+      variables: {
+        headFeatureID: release.headFeature.id,
+        projectID: release.project.id,
         environmentID: release.environment.id,
         forceRebuild: forceRebuild,
       },
@@ -443,10 +443,10 @@ export default class Releases extends React.Component {
     const { refetch } = this.props.data;
 
     createRelease({
-      variables: { 
-        id: release.id, 
-        headFeatureID: release.headFeature.id, 
-        projectID: release.project.id, 
+      variables: {
+        id: release.id,
+        headFeatureID: release.headFeature.id,
+        projectID: release.project.id,
         environmentID: release.environment.id,
         forceRebuild: false,
       },
@@ -499,7 +499,7 @@ export default class Releases extends React.Component {
         </Button>
     )
   }
-  
+
   releaseActionButton(release) {
     let { currentRelease } = this.props.data.project;
 
@@ -514,7 +514,7 @@ export default class Releases extends React.Component {
         </Button>
         {this.stopReleaseButton(release)}
         </div>
-      ); 
+      );
     }
 
     if (_.has(currentRelease, 'id') && currentRelease.id === release.id) {
@@ -532,7 +532,7 @@ export default class Releases extends React.Component {
           color="secondary"
           onClick={()=> this.redeployRelease(release, true)}>
           Rebuild & Redeploy
-        </Button>        
+        </Button>
         <Button
           className={styles.drawerButton}
           color="primary"
@@ -568,19 +568,29 @@ export default class Releases extends React.Component {
       rows = 10
     }
 
-    return (<FormControl fullWidth className={styles.artifactPlaceholder}>
-      <TextField
-        label={artifact.key}
-        InputLabelProps={{className: styles.artifactLabel}}
-        InputProps={{className: styles.artifactInput}}
-        helperText={artifact.source}
-        multiline={multiline}
-        rows={rows}
-        value={artifact.value}
-        margin="normal"
-        disabled
-      />
-    </FormControl>)
+    // return (<FormControl fullWidth className={styles.artifactPlaceholder}>
+    //   <TextField
+    //     label={artifact.key}
+    //     InputLabelProps={{className: styles.artifactLabel}}
+    //     InputProps={{className: styles.artifactInput}}
+    //     helperText={artifact.source}
+    //     multiline={multiline}
+    //     rows={rows}
+    //     value={artifact.value}
+    //     margin="normal"
+    //     disabled
+    //   />
+    // </FormControl>)
+
+    return (<Pre
+      label={artifact.key}
+      // InputLabelProps={{className: styles.artifactLabel}}
+      // InputProps={{className: styles.artifactInput}}
+      helperText={artifact.source}
+      // multiline={multiline}
+      // rows={rows}
+      value={artifact.value}
+    />)
   }
 
   renderDrawer(){
@@ -659,26 +669,26 @@ export default class Releases extends React.Component {
 										Git Info
 									</Typography>
 								</CardContent>
-							</Card>                       
+							</Card>
 							<Card square={true}>
-								<CardContent>                                     
+								<CardContent>
 									<Typography variant="body1">
 										<b>HEAD</b> : <a target="_blank" href={baseGitUrl + release.headFeature.hash }>{release.headFeature.hash}</a>
-									</Typography>                  
+									</Typography>
 								</CardContent>
-							</Card>                  
+							</Card>
 							<Card square={true}>
-								<CardContent>                                               
+								<CardContent>
 									<Typography variant="body1">
 										<b>TAIL</b> : <a  target="_blank" href={baseGitUrl + release.tailFeature.hash }>{release.tailFeature.hash}</a>
-									</Typography>                                  
+									</Typography>
 								</CardContent>
-							</Card>                                    
+							</Card>
 						</Grid>
-						<Grid item xs={12}>                
+						<Grid item xs={12}>
               {this.renderReleaseExtensionTable()}
 						</Grid>
-						<Grid item xs={12}>                
+						<Grid item xs={12}>
               <Card className={styles.card}>
                 <CardContent>
                   <Typography variant="headline" component="h2">
@@ -703,9 +713,9 @@ export default class Releases extends React.Component {
 					</Grid>
 				</div>
 			</Drawer>
-    ) 
+    )
   }
-  
+
   render() {
     const { loading, project } = this.props.data;
     if(loading){
@@ -725,7 +735,7 @@ export default class Releases extends React.Component {
                 <a id="kibana-log-link" href={generateKibanaLink(kibanaAppLogTemplate, {"##PROJECT-NAMESPACE##": `${this.props.store.app.currentEnvironment.key}-${this.props.data.project.slug}`})} target="_blank" className={styles.kibanaLogLink}>
                   APPLICATION LOGS
                 </a>
-              </Typography>                              
+              </Typography>
               </CardContent>
             </Card>
             {project.releases.entries.map((release) => {
@@ -752,7 +762,7 @@ export default class Releases extends React.Component {
                 </Typography>
                 <Typography variant="body1" style={{ textAlign: "center", fontSize: 16, color: "gray" }}>
                   Do some work and deploy a feature <NavLink to={"/projects/" + project.slug + "/features"}><strong>here.</strong></NavLink>
-                </Typography>                  
+                </Typography>
               </CardContent>
             </Card>}
           </Grid>
